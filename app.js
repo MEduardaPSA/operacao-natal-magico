@@ -462,6 +462,111 @@
   }
   function acorde(){ sino(784, 0); sino(988, .13); sino(1175, .26); sino(1568, .42); }
 
+  /* ---------- música de Natal ----------
+     Melodias em domínio público, tocadas pelo próprio site como caixinha de música.
+     Não há gravação nem letra: o navegador sintetiza cada nota.
+     - "Bate o Sino" = Jingle Bells (James Lord Pierpont, 1857)
+     - "Noite Feliz" = Stille Nacht (Franz Gruber, 1818)                         */
+  var NOTA = {C3:130.81, D3:146.83, F3:174.61, G3:196.00,
+    C5:523.25, D5:587.33, E5:659.25, F5:698.46, G5:783.99, A5:880.00, B5:987.77,
+    C6:1046.50, D6:1174.66, E6:1318.51, F6:1396.91};
+  var BATE_O_SINO = { batida:.34, compasso:4, guizos:true, volume:.5,
+    melodia:[
+      ['E5',1],['E5',1],['E5',2], ['E5',1],['E5',1],['E5',2], ['E5',1],['G5',1],['C5',1.5],['D5',.5], ['E5',4],
+      ['F5',1],['F5',1],['F5',1.5],['F5',.5], ['F5',1],['E5',1],['E5',1],['E5',.5],['E5',.5], ['E5',1],['D5',1],['D5',1],['E5',1], ['D5',2],['G5',2],
+      ['E5',1],['E5',1],['E5',2], ['E5',1],['E5',1],['E5',2], ['E5',1],['G5',1],['C5',1.5],['D5',.5], ['E5',4],
+      ['F5',1],['F5',1],['F5',1.5],['F5',.5], ['F5',1],['E5',1],['E5',1],['E5',.5],['E5',.5], ['G5',1],['G5',1],['F5',1],['D5',1], ['C5',4]
+    ],
+    baixo:['C3','C3','C3','C3','F3','C3','D3','G3','C3','C3','C3','C3','F3','C3','G3','C3'] };
+  var NOITE_FELIZ = { batida:.36, compasso:6, guizos:false, volume:.36,
+    melodia:[
+      ['G5',1.5],['A5',.5],['G5',1],['E5',3], ['G5',1.5],['A5',.5],['G5',1],['E5',3],
+      ['D6',2],['D6',1],['B5',3], ['C6',2],['C6',1],['G5',3],
+      ['A5',2],['A5',1],['C6',1.5],['B5',.5],['A5',1], ['G5',1.5],['A5',.5],['G5',1],['E5',3],
+      ['A5',2],['A5',1],['C6',1.5],['B5',.5],['A5',1], ['G5',1.5],['A5',.5],['G5',1],['E5',3],
+      ['D6',2],['D6',1],['F6',1.5],['D6',.5],['B5',1], ['C6',3],['E6',3],
+      ['C6',1.5],['G5',.5],['E5',1],['G5',1.5],['F5',.5],['D5',1], ['C5',6]
+    ],
+    baixo:['C3','C3','G3','C3','F3','C3','F3','C3','G3','C3','G3','C3'] };
+
+  var musica = null, ruido = null;
+  function garantirAudio(){
+    try{
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if(audio.state === 'suspended') audio.resume();
+    } catch(e){ return null; }
+    return audio;
+  }
+  function bufferRuido(){
+    if(ruido) return ruido;
+    var n = Math.floor(audio.sampleRate * .25), b = audio.createBuffer(1, n, audio.sampleRate), d = b.getChannelData(0);
+    for(var i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+    return (ruido = b);
+  }
+  function caixinha(destino, f, t, dur){
+    var fim = t + Math.max(.6, dur * 1.7);
+    [[1, .22], [2, .06], [4.2, .018]].forEach(function(p){
+      var o = audio.createOscillator(), g = audio.createGain();
+      o.type = 'sine'; o.frequency.value = f * p[0];
+      g.gain.setValueAtTime(.0001, t);
+      g.gain.exponentialRampToValueAtTime(p[1], t + .008);
+      g.gain.exponentialRampToValueAtTime(.0001, fim);
+      o.connect(g); g.connect(destino); o.start(t); o.stop(fim + .05);
+    });
+  }
+  function nota_baixo(destino, f, t, dur){
+    var o = audio.createOscillator(), g = audio.createGain();
+    o.type = 'triangle'; o.frequency.value = f;
+    g.gain.setValueAtTime(.0001, t);
+    g.gain.exponentialRampToValueAtTime(.15, t + .03);
+    g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.connect(g); g.connect(destino); o.start(t); o.stop(t + dur + .05);
+  }
+  function guizo(destino, t, vol){
+    var s = audio.createBufferSource(), fil = audio.createBiquadFilter(), g = audio.createGain();
+    s.buffer = bufferRuido(); fil.type = 'bandpass'; fil.frequency.value = 8000; fil.Q.value = 1.2;
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + .12);
+    s.connect(fil); fil.connect(g); g.connect(destino); s.start(t); s.stop(t + .14);
+  }
+  function tocarMusica(peca, repetir){
+    pararMusica(true);
+    if(!somLigado || !garantirAudio()) return;
+    var mestre = audio.createGain();
+    mestre.gain.value = peca.volume;
+    mestre.connect(audio.destination);
+    var atual = {mestre:mestre, timer:null};
+    musica = atual;
+    function agendar(inicio){
+      var t = inicio, b = peca.batida;
+      peca.melodia.forEach(function(n){ caixinha(mestre, NOTA[n[0]], t, n[1] * b); t += n[1] * b; });
+      var total = t - inicio, comp = peca.compasso * b;
+      peca.baixo.forEach(function(nb, i){ nota_baixo(mestre, NOTA[nb], inicio + i * comp, comp * .95); });
+      if(peca.guizos){
+        for(var i = 0; i < Math.round(total / b); i++){
+          guizo(mestre, inicio + i * b, i % 2 ? .05 : .09);
+          guizo(mestre, inicio + (i + .5) * b, .035);
+        }
+      }
+      if(repetir){
+        var proximo = inicio + total + b * 2;
+        atual.timer = setTimeout(function(){ if(musica === atual) agendar(proximo); }, Math.max(0, (proximo - audio.currentTime - 1.5) * 1000));
+      }
+    }
+    agendar(audio.currentTime + .08);
+  }
+  function pararMusica(rapido){
+    if(!musica) return;
+    var m = musica; musica = null;
+    clearTimeout(m.timer);
+    try{
+      var t = audio.currentTime, queda = rapido ? .15 : .8;
+      m.mestre.gain.cancelScheduledValues(t);
+      m.mestre.gain.setValueAtTime(m.mestre.gain.value, t);
+      m.mestre.gain.linearRampToValueAtTime(0, t + queda);
+      setTimeout(function(){ try{ m.mestre.disconnect(); } catch(e){} }, (queda + .1) * 1000);
+    } catch(e){}
+  }
+
   /* ---------- apresentação ---------- */
   var ap = $('#apresentacao');
   var trava = null;
@@ -484,6 +589,7 @@
     $('#bt-receber').focus();
   }
   function fecharApresentacao(){
+    pararMusica(true);
     ap.hidden = true;
     document.body.classList.remove('em-apresentacao');
     if(document.fullscreenElement && document.exitFullscreen){ document.exitFullscreen().catch(function(){}); }
@@ -518,11 +624,10 @@
     el.hidden = false;
     document.body.classList.add('em-intro');
     var tempos = reduzMovimento ? [0, 0, 0, 0] : [80, 900, 2900, 4700];
-    var sinos = [1046, 880, 988];
     ['f1', 'f2', 'f3', 'f4'].forEach(function(f, i){
       timersIntro.push(setTimeout(function(){
         el.classList.add(f);
-        if(i < 3) sino(sinos[i]);
+        if(f === 'f1') tocarMusica(BATE_O_SINO, true);
         if(f === 'f4') $('#bt-intro-entrar').focus();
       }, tempos[i]));
     });
@@ -530,6 +635,7 @@
   }
   function fecharIntro(){
     timersIntro.forEach(clearTimeout); timersIntro = [];
+    pararMusica();
     $('#intro').hidden = true;
     document.body.classList.remove('em-intro');
     if(depoisIntro){ var f = depoisIntro; depoisIntro = null; f(); }
@@ -547,6 +653,7 @@
       acessoSessao = true;
       try{ localStorage.setItem(CHAVE_ACESSO, String(h)); } catch(err){}
       erro.hidden = true; $('#f-codigo').setAttribute('aria-invalid', 'false');
+      garantirAudio();
       var destino = dados ? 'pronta' : 'inicio';
       mostrar(destino);
       mostrarIntro(function(){ var f = destino === 'inicio' ? $('#bt-comecar') : $('#bt-apresentar'); if(f) f.focus(); });
@@ -589,17 +696,28 @@
   });
   $('#link-campo').addEventListener('focus', function(e){ e.target.select(); });
 
-  $('#bt-receber').addEventListener('click', function(){ sino(880); etapa('ap-envelope'); $('#bt-lacre').focus(); });
+  $('#bt-receber').addEventListener('click', function(){ garantirAudio(); sino(880); etapa('ap-envelope'); $('#bt-lacre').focus(); });
   $('#bt-lacre').addEventListener('click', function(){
+    garantirAudio();
     sino(1046);
+    tocarMusica(NOITE_FELIZ, true);
     $('#envelope').classList.add('aberto');
     setTimeout(function(){ etapa('ap-carta'); }, reduzMovimento ? 50 : 950);
   });
-  $('#bt-aceito').addEventListener('click', function(){ acorde(); montarMedidor(); etapa('ap-aceita'); });
-  $('#bt-reler').addEventListener('click', function(){ etapa('ap-carta'); });
+  $('#bt-aceito').addEventListener('click', function(){
+    pararMusica(true); acorde(); montarMedidor(); etapa('ap-aceita');
+    setTimeout(function(){ if(!ap.hidden && !$('#ap-aceita').hidden) tocarMusica(BATE_O_SINO, false); }, 900);
+  });
+  $('#bt-reler').addEventListener('click', function(){ tocarMusica(NOITE_FELIZ, true); etapa('ap-carta'); });
   $('#bt-sair').addEventListener('click', fecharApresentacao);
   $('#bt-som').addEventListener('click', function(e){
     somLigado = !somLigado;
+    if(!somLigado) pararMusica(true);
+    else {
+      garantirAudio();
+      if(!$('#ap-carta').hidden) tocarMusica(NOITE_FELIZ, true);
+      else if(!$('#ap-aceita').hidden) tocarMusica(BATE_O_SINO, false);
+    }
     e.currentTarget.textContent = somLigado ? 'Som ligado' : 'Som desligado';
     e.currentTarget.setAttribute('aria-pressed', String(somLigado));
   });
