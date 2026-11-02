@@ -565,6 +565,12 @@ body.em-intro #neve{z-index:61}
   #impressao .pp-mrz{margin-top:2mm}
   #impressao .pp-dados{grid-template-columns:1fr 1fr}
   #impressao .pp-mrz{font-size:9.6pt}
+  /* O Safari do iPhone imprime degradês com transparência como preto:
+     na impressão, carta, passaporte e certificado usam fundo liso. */
+  #impressao .carta{background:#f7f4ec !important}
+  #impressao .passaporte{background:#e6efeb !important}
+  #impressao .certificado{background:#f7f4ec !important}
+  #impressao .ct-moldura::after{border-color:#d9a9a9}
   #impressao .ct-wrap{max-width:none; width:210mm}
   #impressao .certificado{aspect-ratio:auto; height:296mm; box-shadow:none}
   #impressao .guia{page:guia; color:var(--tinta); background:none; font-size:10.5pt}
