@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Operação Natal Mágico</title>
+<meta name="description" content="Área dos pais da Operação Natal Mágico: carta personalizada do Papai Noel, passaporte e guia secreto.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0c1c26">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IM+Fell+English+SC&family=Kalam:wght@400;700&family=Mrs+Saint+Delafield&family=Special+Elite&display=swap">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<canvas id="neve" aria-hidden="true"></canvas>
+
+<main class="app">
+  <!-- ACESSO -->
+  <section id="tela-acesso" class="tela" hidden>
+    <div class="acesso">
+      <span class="emblema-grande" data-emblema></span>
+      <p class="eyebrow">Correio Oficial do Polo Norte · Área dos pais</p>
+      <h1>Bem-vindo ao Polo Norte</h1>
+      <form id="form-acesso" class="folha" novalidate>
+        <div class="acesso-campo">
+          <label class="rotulo" for="f-codigo">Código de acesso</label>
+          <input id="f-codigo" type="text" maxlength="24" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Ex.: MAGIA2026">
+          <p class="dica">O código está no e-mail de compra da Operação Natal Mágico.</p>
+          <p id="erro-codigo" class="erro" hidden></p>
+        </div>
+        <div class="folha-acoes"><button type="submit" class="bt bt-principal">Entrar no Polo Norte</button></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- INÍCIO -->
+  <section id="tela-inicio" class="tela" hidden>
+    <div class="inicio-topo">
+      <span class="emblema-grande" data-emblema></span>
+      <p class="eyebrow">Correio Oficial do Polo Norte · Área dos pais</p>
+      <h1>Bem-vindo ao Polo Norte</h1>
+      <p class="lead">Em 2 minutos, você prepara a carta personalizada em que o Papai Noel convoca seu filho para a Operação Natal Mágico, e o Passaporte já preenchido. Depois, é só apresentar.</p>
+      <div class="acoes">
+        <button id="bt-comecar" class="bt bt-principal" type="button">Começar missão</button>
+        <button id="bt-guia-inicio" class="bt bt-secundario" type="button">Guia secreto dos pais</button>
+        <button id="bt-demo" class="bt bt-secundario" type="button">Ver como a criança recebe</button>
+      </div>
+      <ul class="garantias">
+        <li>Nenhum cadastro</li>
+        <li>Nada fica guardado</li>
+        <li>Imprima ou apresente na tela</li>
+      </ul>
+      <p class="aviso-crianca">Prepare longe da criança: a surpresa começa quando ela vê a mensagem urgente.</p>
+    </div>
+    <div class="amostra-bloco">
+      <p class="eyebrow">Exemplo de carta</p>
+      <div id="amostra" class="amostra" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- FORMULÁRIO -->
+  <section id="tela-form" class="tela" hidden>
+    <form id="form-carta" class="folha" novalidate>
+      <div class="folha-topo">
+        <p class="eyebrow-papel">Formulário oficial nº 24 · Central das Missões</p>
+        <h2>Conte aos duendes sobre a criança</h2>
+        <p class="nota">Só os campos com <span class="obrig">*</span> são obrigatórios. Os outros deixam a carta mais mágica; se ficarem em branco, a carta se ajusta sozinha.</p>
+        <button type="button" id="bt-exemplo" class="bt-link-papel">Preencher com um exemplo</button>
+      </div>
+
+      <fieldset>
+        <legend>Sobre a criança</legend>
+        <div class="grade">
+          <div class="campo">
+            <label class="rotulo" for="f-nome">Nome da criança <span class="obrig">*</span></label>
+            <input id="f-nome" type="text" maxlength="40" autocomplete="off" placeholder="Como ela é chamada em casa">
+            <p id="erro-nome" class="erro" hidden></p>
+          </div>
+          <div class="campo">
+            <span class="rotulo" id="rot-genero">Menino ou menina <span class="obrig">*</span></span>
+            <div id="f-genero" class="escolha" role="radiogroup" aria-labelledby="rot-genero">
+              <label class="opcao"><input type="radio" name="genero" id="g-menino" value="menino"><span>Menino</span></label>
+              <label class="opcao"><input type="radio" name="genero" id="g-menina" value="menina"><span>Menina</span></label>
+            </div>
+            <p class="dica">Ajusta palavras como “querido” e “querida”.</p>
+            <p id="erro-genero" class="erro" hidden></p>
+          </div>
+          <div class="campo">
+            <label class="rotulo" for="f-idade">Idade <span class="obrig">*</span></label>
+            <input id="f-idade" type="number" inputmode="numeric" min="1" max="14" placeholder="Ex.: 7">
+            <p id="erro-idade" class="erro" hidden></p>
+          </div>
+          <div class="campo">
+            <label class="rotulo" for="f-cidade">Cidade <span class="obrig">*</span></label>
+            <input id="f-cidade" type="text" maxlength="50" autocomplete="off" placeholder="Ex.: Brasília">
+            <p id="erro-cidade" class="erro" hidden></p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Detalhes mágicos</legend>
+        <p class="legenda-nota">Opcional. Escreva do jeito que você falaria.</p>
+        <div class="grade">
+          <div class="campo inteiro">
+            <label class="rotulo" for="f-gosta">Do que mais gosta</label>
+            <input id="f-gosta" type="text" maxlength="80" autocomplete="off">
+            <p class="dica">Ex.: dinossauros e desenhar</p>
+          </div>
+          <div class="campo inteiro">
+            <label class="rotulo" for="f-conquista">Uma conquista deste ano</label>
+            <input id="f-conquista" type="text" maxlength="90" autocomplete="off">
+            <p class="dica">Complete a frase “Este ano você…”. Ex.: aprendeu a ler sozinha</p>
+          </div>
+          <div class="campo">
+            <label class="rotulo" for="f-pessoa">Uma pessoa especial</label>
+            <input id="f-pessoa" type="text" maxlength="40" autocomplete="off">
+            <p class="dica">Ex.: a vovó Lúcia</p>
+          </div>
+          <div class="campo">
+            <label class="rotulo" for="f-pet">Bichinho de estimação</label>
+            <input id="f-pet" type="text" maxlength="30" autocomplete="off">
+            <p class="dica">Ex.: o Thor</p>
+          </div>
+          <div class="campo inteiro">
+            <label class="rotulo" for="f-pedido">Pedido de Natal</label>
+            <input id="f-pedido" type="text" maxlength="70" autocomplete="off">
+            <p class="dica">Preencha só se for algo que você pode dar. O Papai Noel diz que leu o pedido, mas não promete nada.</p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Recado dos pais</legend>
+        <p class="legenda-nota">Opcional. Vira o P.S. da carta.</p>
+        <div class="grade">
+          <div class="campo inteiro">
+            <label class="rotulo" for="f-recado">Recado</label>
+            <textarea id="f-recado" maxlength="280"></textarea>
+            <p class="dica">Ex.: Temos muito orgulho de você.</p>
+          </div>
+          <div class="campo">
+            <label class="rotulo" for="f-assina">Quem assina o recado</label>
+            <input id="f-assina" type="text" maxlength="40" autocomplete="off">
+            <p class="dica">Ex.: Mamãe e papai</p>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="folha-acoes">
+        <button type="submit" class="bt bt-principal">Gerar a carta</button>
+        <button type="button" id="bt-voltar-inicio" class="bt bt-secundario">Voltar</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- PREPARANDO -->
+  <section id="tela-preparando" class="tela tela-centro" hidden>
+    <div class="selo-giratorio" data-emblema></div>
+    <h2>Preparando a mensagem do Polo Norte</h2>
+    <ul class="passos" id="passos">
+      <li>Consultando os duendes da Central das Missões</li>
+      <li>Escrevendo a carta à mão</li>
+      <li>Carimbando o passaporte oficial</li>
+    </ul>
+  </section>
+
+  <!-- PRONTO -->
+  <section id="tela-pronta" class="tela" hidden>
+    <div class="bloco">
+      <p class="eyebrow">Uma mensagem chegou do Polo Norte</p>
+      <h2 id="pronta-titulo">A carta está pronta</h2>
+      <p class="lead">Leia antes de mostrar. Se quiser mudar algo, edite os dados e gere de novo: o número de agente continua o mesmo.</p>
+    </div>
+    <div class="acoes">
+      <button id="bt-apresentar" class="bt bt-principal" type="button">Apresentar para a criança</button>
+      <button id="bt-editar" class="bt bt-secundario" type="button">Editar dados</button>
+    </div>
+    <div class="painel">
+      <div class="painel-item">
+        <div>
+          <p class="painel-rotulo">Número de agente</p>
+          <p id="num-missao" class="num-missao">PN-2026-0000</p>
+          <p class="painel-nota">Já vem escrito na carta e no passaporte. Guarde também por aqui.</p>
+        </div>
+        <button id="bt-copiar-num" class="bt bt-pequeno" type="button">Copiar número</button>
+      </div>
+      <div class="painel-item">
+        <div>
+          <p class="painel-rotulo">Apresentar em outro aparelho</p>
+          <p class="painel-nota">Copie o link mágico e abra na TV, no tablet ou no celular de quem vai mostrar. O link abre só a apresentação desta carta.</p>
+        </div>
+        <button id="bt-copiar-link" class="bt bt-pequeno" type="button">Copiar link mágico</button>
+        <input id="link-campo" class="link-campo" type="text" readonly hidden aria-label="Link mágico">
+      </div>
+      <div class="painel-item">
+        <div>
+          <p class="painel-rotulo">Guia secreto dos pais</p>
+          <p class="painel-nota">O passo a passo da noite de abertura, da rotina de cada noite e do grande final.</p>
+        </div>
+        <button id="bt-guia-pronta" class="bt bt-pequeno" type="button">Abrir o guia</button>
+      </div>
+    </div>
+
+    <div class="abas" role="tablist" aria-label="Materiais personalizados">
+      <button type="button" role="tab" id="aba-carta" aria-selected="true" aria-controls="painel-carta">Carta do Papai Noel</button>
+      <button type="button" role="tab" id="aba-passaporte" aria-selected="false" aria-controls="painel-passaporte" tabindex="-1">Passaporte</button>
+    </div>
+    <div id="painel-carta" class="aba-painel" role="tabpanel" aria-labelledby="aba-carta">
+      <div class="aba-acoes">
+        <button id="bt-imprimir-carta" class="bt bt-secundario" type="button">Imprimir ou salvar PDF</button>
+        <p class="dica-impressao">No celular, escolha “Salvar como PDF” na tela de impressão.</p>
+      </div>
+      <div id="carta-final"></div>
+    </div>
+    <div id="painel-passaporte" class="aba-painel" role="tabpanel" aria-labelledby="aba-passaporte" hidden>
+      <p class="lead">A página de identificação já sai preenchida. Imprima, recorte na linha pontilhada e cole na primeira página do Passaporte do kit. A criança completa a foto, o codinome e a assinatura.</p>
+      <div class="aba-acoes">
+        <button id="bt-imprimir-passaporte" class="bt bt-secundario" type="button">Imprimir o passaporte</button>
+      </div>
+      <div id="passaporte-final"></div>
+    </div>
+  </section>
+
+  <!-- GUIA DOS PAIS -->
+  <section id="tela-guia" class="tela" hidden>
+    <div class="bloco">
+      <button id="bt-guia-voltar" class="bt-voltar" type="button">← Voltar</button>
+      <p class="eyebrow">Só para os pais · não deixe a criança ver</p>
+      <h2>Guia secreto dos pais</h2>
+      <p class="lead">Tudo o que você precisa para conduzir os 24 dias com 5 minutos por noite. As missões, os bilhetes e as atividades estão nos PDFs do kit.</p>
+      <div class="acoes"><button id="bt-imprimir-guia" class="bt bt-secundario" type="button">Imprimir o guia</button></div>
+    </div>
+    <div id="guia-conteudo" class="guia">
+      <ol class="guia-etapas">
+        <li class="etapa">
+          <h3>Antes de começar</h3>
+          <div class="etapa-corpo">
+            <p>Faça tudo até a véspera do primeiro dia. Marque o que já fez:</p>
+            <ul class="checklist">
+              <li><label><input type="checkbox" id="c1" data-check="c1"><span>Imprimir o Kit de Abertura: Passaporte, Medidor de Magia, Juramento do Agente e Mapa do Polo Norte.</span></label></li>
+              <li><label><input type="checkbox" id="c2" data-check="c2"><span>Imprimir e recortar os 24 Cartões do Dia. Guardar em um envelope, longe da criança.</span></label></li>
+              <li><label><input type="checkbox" id="c3" data-check="c3"><span>Imprimir os Desafios do Agente que quiser usar. Eles são opcionais.</span></label></li>
+              <li><label><input type="checkbox" id="c4" data-check="c4"><span>Escolher onde o cartão vai aparecer toda manhã: ao lado da cama, na mesa do café ou na porta da geladeira. Sempre o mesmo lugar vira ritual.</span></label></li>
+              <li><label><input type="checkbox" id="c5" data-check="c5"><span>Separar lápis de cor, cola e uma tesoura sem ponta.</span></label></li>
+              <li><label><input type="checkbox" id="c6" data-check="c6"><span>Gerar a carta, imprimir o passaporte e testar a apresentação no aparelho que você vai usar.</span></label></li>
+            </ul>
+          </div>
+        </li>
+        <li class="etapa">
+          <h3>A noite da abertura (dia 1)</h3>
+          <div class="etapa-corpo">
+            <ol>
+              <li>À noite, com as luzes mais baixas, diga que chegou uma mensagem estranha no seu celular.</li>
+              <li>Toque em <strong>Apresentar para a criança</strong> e entregue o aparelho. Deixe que ela mesma toque no selo e leia, ou leia junto.</li>
+              <li>Quando ela tocar em <strong>Eu aceito a missão!</strong>, entregue o Passaporte e o Medidor de Magia.</li>
+              <li>Ajude a conferir o Passaporte: o número de agente está na carta. Depois, ela faz o Juramento do Agente em voz alta.</li>
+            </ol>
+            <p class="guia-nota">Prefere papel? Imprima a carta, dobre em um envelope e deixe na porta ou na caixa de correio.</p>
+          </div>
+        </li>
+        <li class="etapa">
+          <h3>A rotina de cada noite</h3>
+          <div class="etapa-corpo">
+            <p>Cinco minutos, depois que a criança dormir:</p>
+            <ol>
+              <li>Deixe o Cartão do Dia no lugar combinado.</li>
+              <li>De manhã, ela encontra o cartão e lê o bilhete e a missão, ou você lê para ela.</li>
+              <li>Ao longo do dia, ela cumpre a missão. O desafio em PDF é opcional.</li>
+              <li>À noite, ela pinta uma estrela no Medidor de Magia e cola um selo no Passaporte.</li>
+              <li>A cada três estrelas, ela pinta o caminho até o próximo lugar do mapa.</li>
+            </ol>
+          </div>
+        </li>
+        <li class="etapa">
+          <h3>Começou depois do dia 1? Versão Expressa</h3>
+          <div class="etapa-corpo">
+            <p>Use só os 12 cartões marcados com ★ (dias 1, 3, 4, 5, 7, 10, 13, 15, 17, 19, 23 e 24) e pinte duas estrelas por missão. Comece até 13 de dezembro para terminar no dia 24.</p>
+          </div>
+        </li>
+        <li class="etapa">
+          <h3>A caça ao tesouro (dia 23)</h3>
+          <div class="etapa-corpo">
+            <p>Na noite do dia 22, esconda as pistas impressas:</p>
+            <ul>
+              <li>Pista 2 na geladeira</li>
+              <li>Pista 3 dentro de um sapato</li>
+              <li>Pista 4 embaixo do travesseiro</li>
+              <li>Pista 5 na máquina de lavar</li>
+              <li>Pista 6 na árvore de Natal</li>
+            </ul>
+            <p>A pista 1 vai junto com o Cartão do Dia 23. Na pista 6, escreva à mão onde está a surpresa final. Se algum esconderijo não existir na sua casa, troque por outro e ajuste a pista anterior.</p>
+          </div>
+        </li>
+        <li class="etapa">
+          <h3>O grande final (dia 24)</h3>
+          <div class="etapa-corpo">
+            <ul>
+              <li>Preencha o certificado com o nome da criança e a data. Assine como Papai Noel, com uma letra diferente da sua.</li>
+              <li>Entregue o certificado junto com o Cartão Final do Papai Noel.</li>
+              <li>Os Vale-Momentos em Família podem ir junto, como presente extra.</li>
+            </ul>
+          </div>
+        </li>
+        <li class="etapa">
+          <h3>Se algo sair do roteiro</h3>
+          <div class="etapa-corpo">
+            <dl class="guia-faq">
+              <div><dt>Esqueci de deixar o cartão.</dt><dd>Deixe dois no dia seguinte, com um aviso: “A neve atrasou o duende Faísca”.</dd></div>
+              <div><dt>O dia foi corrido demais.</dt><dd>Troque por uma missão de 5 minutos, como a da gratidão (dia 4) ou a dos elogios (dia 15). Você pode trocar os dias de lugar.</dd></div>
+              <div><dt>A criança não cumpriu a missão.</dt><dd>Não apague estrelas. Diga que a missão pode ser feita amanhã: a magia não tem pressa.</dd></div>
+              <div><dt>Tenho mais de um filho.</dt><dd>Gere uma carta e um passaporte para cada um. Cada criança ganha o próprio número de agente, e as missões podem ser feitas juntos.</dd></div>
+              <div><dt>A criança perguntou se é você.</dt><dd>Responda com outra pergunta: “O que você acha?”. Deixe a imaginação dela decidir.</dd></div>
+            </dl>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <footer class="rodape">Operação Natal Mágico · O que você digita fica só neste aparelho. Nada é enviado nem guardado.</footer>
+</main>
+
+<!-- BOAS-VINDAS (depois do código) -->
+<div id="intro" class="intro" hidden role="dialog" aria-modal="true" aria-label="Boas-vindas ao Polo Norte">
+  <button id="bt-intro-pular" class="intro-pular" type="button">Pular</button>
+  <div class="intro-palco">
+    <div class="intro-selo"><span data-emblema></span><p>Acesso liberado</p></div>
+    <div class="intro-dupla">
+      <figure class="intro-personagem intro-faisca">
+        <p class="balao">Bem-vindo à Central das Missões! Eu sou o Faísca. Todo dia, vou entregar uma missão para o seu pequeno agente.</p>
+        <div class="desenho" data-personagem="faisca"></div>
+        <figcaption>Duende Faísca<span>Chefe da Central das Missões</span></figcaption>
+      </figure>
+      <figure class="intro-personagem intro-lumi">
+        <p class="balao">E eu sou a Lumi, a rena caçula! Cada missão cumprida me dá força para o meu primeiro voo.</p>
+        <div class="desenho" data-personagem="lumi"></div>
+        <figcaption>Rena Lumi<span>A estrela do primeiro voo</span></figcaption>
+      </figure>
+    </div>
+    <button id="bt-intro-entrar" class="bt bt-ouro bt-grande intro-entrar" type="button">Entrar no Polo Norte</button>
+  </div>
+</div>
+
+<!-- APRESENTAÇÃO -->
+<div id="apresentacao" class="ap" hidden role="dialog" aria-modal="true" aria-label="Mensagem do Polo Norte">
+  <div class="ap-barra">
+    <button id="bt-som" type="button" aria-pressed="true">Som ligado</button>
+    <button id="bt-sair" type="button">Sair</button>
+  </div>
+
+  <section id="ap-alerta" class="ap-etapa">
+    <div class="farol" aria-hidden="true"></div>
+    <p class="transmissao">Central das Missões · Transmissão prioritária</p>
+    <h2 class="atencao">ATENÇÃO!</h2>
+    <p class="ap-texto">Uma mensagem urgente acaba de chegar do Polo Norte.</p>
+    <button id="bt-receber" class="bt bt-principal bt-grande" type="button">Receber a mensagem</button>
+  </section>
+
+  <section id="ap-envelope" class="ap-etapa" hidden>
+    <p class="ap-texto ap-texto-menor">Esta mensagem é para:</p>
+    <p id="ap-nome" class="ap-nome"></p>
+    <div class="envelope-palco">
+      <div id="envelope" class="envelope">
+        <div class="aba"></div>
+        <button id="bt-lacre" class="lacre-btn" type="button" aria-label="Abrir o envelope" data-estrela></button>
+        <p class="env-carimbo">Correio das Renas · Entrega urgente</p>
+      </div>
+    </div>
+    <p class="toque">Toque no selo para abrir</p>
+  </section>
+
+  <section id="ap-carta" class="ap-etapa ap-etapa-carta" hidden>
+    <div id="ap-folha" class="ap-folha"></div>
+    <button id="bt-aceito" class="bt bt-ouro bt-grande" type="button">Eu aceito a missão!</button>
+  </section>
+
+  <section id="ap-aceita" class="ap-etapa" hidden>
+    <div class="estrela-grande" data-estrela></div>
+    <h2 class="aceita-titulo">Missão aceita!</h2>
+    <p id="ap-agente" class="ap-agente"></p>
+    <div class="medidor-bloco">
+      <p class="medidor-rotulo">Medidor de Magia · 1 de 24 estrelas</p>
+      <div id="medidor" class="medidor" aria-hidden="true"></div>
+    </div>
+    <p class="ap-texto ap-texto-menor">A primeira estrela acabou de acender. Fique de olho: o duende Faísca vai deixar a sua próxima missão.</p>
+    <button id="bt-reler" class="bt bt-secundario" type="button">Ler a carta de novo</button>
+  </section>
+</div>
+
+<div id="impressao" aria-hidden="true"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

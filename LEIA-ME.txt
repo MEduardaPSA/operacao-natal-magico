@@ -1,0 +1,20 @@
+OPERAÇÃO NATAL MÁGICO · SITE DA ÁREA DOS PAIS
+
+Arquivos
+- index.html  → estrutura das telas e textos fixos (guia dos pais, formulário, apresentação)
+- estilo.css  → cores, fontes, layout e animações
+- app.js      → funcionamento: código de acesso, carta, passaporte, apresentação, impressão
+
+Os três arquivos precisam ficar juntos, na mesma pasta.
+
+Como publicar (sem custo)
+1. Acesse app.netlify.com/drop
+2. Arraste a pasta inteira "site" para a página.
+3. O Netlify gera um link. Esse é o link que vai no e-mail de compra, junto com o código.
+
+Código de acesso
+- Código oficial da temporada 2026: MAGIA2026
+- Para trocar o código, peça ao Claude um novo hash e substitua o número na lista CODIGOS, no começo do app.js. Depois, publique a pasta de novo.
+
+O que NÃO vai neste site
+Os 24 Cartões do Dia, os Desafios do Agente, o mapa, o medidor, as pistas, o certificado e os vale-momentos ficam só nos PDFs da área de membros da plataforma de venda.
