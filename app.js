@@ -282,6 +282,47 @@
     alvo.replaceChildren(art);
   }
 
+  /* ---------- o certificado ---------- */
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]; });
+  }
+  function pegadaLumi(){
+    return '<svg viewBox="0 0 40 40" aria-hidden="true"><ellipse cx="14" cy="22" rx="7" ry="11" transform="rotate(-12 14 22)" fill="currentColor"/>' +
+      '<ellipse cx="27" cy="22" rx="7" ry="11" transform="rotate(12 27 22)" fill="currentColor"/></svg>';
+  }
+  /* nomes longos diminuem para caber numa linha só */
+  function tamanhoNome(nome){ return Math.max(4.6, Math.min(9, 78 / (nome.length * .66))).toFixed(2); }
+  function renderCertificado(alvo, d){
+    var estrelas = '';
+    for(var i = 0; i < 24; i++) estrelas += svgEstrela();
+    var cantos = '';
+    for(var k = 1; k <= 4; k++) cantos += '<span class="ct-canto c' + k + '">' + svgEstrela() + '</span>';
+    alvo.innerHTML =
+      '<div class="ct-wrap"><article class="certificado" aria-label="Certificado de Agente de Honra de ' + esc(d.nome) + '">' +
+        '<div class="ct-moldura"></div>' + cantos +
+        '<div class="ct-faisca">' + DESENHOS.faisca + '</div><div class="ct-lumi">' + DESENHOS.lumi + '</div>' +
+        '<div class="ct-corpo">' +
+          '<div class="ct-emblema">' + emblema() + '</div>' +
+          '<p class="ct-olho">Correio Oficial do Polo Norte</p>' +
+          '<h2 class="ct-titulo">Certificado</h2>' +
+          '<p class="ct-sub">de Agente de Honra do Polo Norte</p>' +
+          '<p class="ct-certificamos">Certificamos que</p>' +
+          '<p class="ct-nome" style="font-size:' + tamanhoNome(d.nome) + 'cqw">' + esc(d.nome) + '</p>' +
+          '<p class="ct-num">Agente Especial nº ' + esc(d.num) + '</p>' +
+          '<p class="ct-texto">completou a Operação Natal Mágico, acendeu as 24 estrelas do Medidor de Magia e ajudou a rena Lumi a voar pela primeira vez. ' +
+            'Por sua bondade, coragem e alegria, recebe o título de <b>Agente de Honra do Polo Norte</b>.</p>' +
+          '<div class="ct-medidor"><span class="ct-medidor-rot">Medidor de Magia · 24 de 24</span><div class="ct-estrelas" aria-hidden="true">' + estrelas + '</div></div>' +
+          '<p class="ct-data">Polo Norte, 24 de dezembro de ' + partes(d.dt).a + '</p>' +
+          '<div class="ct-assinaturas">' +
+            '<div><span class="ct-assin">Papai Noel</span><i></i><small>Papai Noel</small></div>' +
+            '<div><span class="ct-assin">Faísca</span><i></i><small>Duende Faísca</small></div>' +
+            '<div><span class="ct-pegada">' + pegadaLumi() + '</span><i></i><small>Rena Lumi</small></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ct-selo"><div class="ct-lacre">' + svgEstrela() + '</div></div>' +
+      '</article></div>';
+  }
+
   /* ---------- telas ---------- */
   var TELAS = ['acesso','inicio','form','preparando','pronta','guia'];
   var telaAtual = 'inicio', telaAntesDoGuia = 'inicio';
@@ -294,8 +335,41 @@
 
   var dados = null;
   var origemDemo = false;
+  var criancas = [];   /* cartas criadas nesta visita: só na memória, somem ao fechar a página */
 
   var CAMPOS = ['nome','idade','cidade','gosta','conquista','pessoa','pet','pedido','recado','assina'];
+  function limparForm(){
+    CAMPOS.forEach(function(k){ $('#f-' + k).value = ''; });
+    document.querySelectorAll('input[name="genero"]').forEach(function(r){ r.checked = false; });
+    ['nome','genero','idade','cidade'].forEach(function(k){
+      $('#erro-' + k).hidden = true;
+      var campo = $('#f-' + k); if(campo) campo.setAttribute('aria-invalid', 'false');
+    });
+  }
+  function numeroUnico(){
+    var n;
+    do { n = novoNumero(); } while(criancas.some(function(c){ return c.num === n; }));
+    return n;
+  }
+  function guardarCrianca(d){
+    var i = criancas.findIndex(function(c){ return c.num === d.num; });
+    if(i >= 0) criancas[i] = d; else criancas.push(d);
+  }
+  function renderCriancas(){
+    var caixa = $('#lista-criancas'), chips = $('#chips-criancas');
+    caixa.hidden = criancas.length < 2;
+    chips.replaceChildren();
+    criancas.forEach(function(c){
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'chip';
+      b.setAttribute('aria-pressed', String(dados && c.num === dados.num));
+      b.append(c.nome);
+      var falta = faltaImprimir(c).length;
+      var s = document.createElement('small'); s.textContent = c.num + (falta ? ' · falta imprimir ' + falta : ' · tudo impresso'); b.append(s);
+      b.addEventListener('click', function(){ dados = c; montarPronta(); escolherAba('carta'); });
+      chips.append(b);
+    });
+  }
   function preencherForm(d){
     CAMPOS.forEach(function(k){ $('#f-' + k).value = d[k] || ''; });
     var r = $('#g-' + d.genero);
@@ -358,12 +432,15 @@
     $('#num-missao').textContent = dados.num;
     renderCarta($('#carta-final'), dados);
     renderPassaporte($('#passaporte-final'), dados);
+    renderCertificado($('#certificado-final'), dados);
+    atualizarImpressos();
     $('#link-campo').hidden = true;
     preencherForm(dados);
+    renderCriancas();
   }
 
   /* ---------- abas ---------- */
-  var ABAS = ['carta', 'passaporte'];
+  var ABAS = ['carta', 'passaporte', 'certificado'];
   function escolherAba(nome, focar){
     ABAS.forEach(function(a){
       var ativa = a === nome;
@@ -390,6 +467,7 @@
     var alvo = $('#impressao');
     if(tipo === 'carta') renderCarta(alvo, dados);
     else if(tipo === 'passaporte') renderPassaporte(alvo, dados);
+    else if(tipo === 'certificado') renderCertificado(alvo, dados);
     else {
       var guia = $('#guia-conteudo').cloneNode(true);
       guia.removeAttribute('id');
@@ -400,8 +478,37 @@
       guia.prepend(titulo);
       alvo.replaceChildren(guia);
     }
+    if(tipo !== 'guia' && dados){
+      dados.impressos = dados.impressos || {};
+      dados.impressos[tipo] = true;
+      atualizarImpressos();
+    }
     window.print();
   }
+
+  /* ---------- "imprima agora": lembra o que já foi mandado para impressão nesta visita ---------- */
+  var DOCS = ['carta', 'passaporte', 'certificado'];
+  function faltaImprimir(d){ return DOCS.filter(function(t){ return !(d.impressos && d.impressos[t]); }); }
+  function atualizarImpressos(){
+    if(!dados) return;
+    document.querySelectorAll('.ia-bt').forEach(function(b){
+      var feito = !!(dados.impressos && dados.impressos[b.dataset.imp]);
+      b.classList.toggle('feito', feito);
+      b.querySelector('.ia-n').textContent = feito ? '✓' : String(DOCS.indexOf(b.dataset.imp) + 1);
+      b.querySelector('.ia-st').textContent = feito ? 'Impresso' : 'Imprimir';
+      b.title = feito ? 'Toque para imprimir de novo' : '';
+    });
+    $('#ia-titulo').textContent = criancas.length > 1 ? 'Carta, passaporte e certificado ' + (dados.genero === 'menina' ? 'da ' : 'do ') + dados.nome : 'Carta, passaporte e certificado';
+    $('#ia-pronto').hidden = faltaImprimir(dados).length > 0;
+    renderCriancas();
+  }
+  document.querySelectorAll('.ia-bt').forEach(function(b){
+    b.addEventListener('click', function(){ escolherAba(b.dataset.imp); imprimir(b.dataset.imp); });
+  });
+  window.addEventListener('beforeunload', function(e){
+    var pendentes = criancas.some(function(c){ return faltaImprimir(c).length > 0; });
+    if(pendentes){ e.preventDefault(); e.returnValue = ''; }
+  });
 
   /* ---------- link mágico (abre só a apresentação desta carta) ---------- */
   function codifica(d){
@@ -674,19 +781,30 @@
   $('#bt-guia-voltar').addEventListener('click', function(){ mostrar(telaAntesDoGuia); });
   $('#bt-imprimir-guia').addEventListener('click', function(){ imprimir('guia'); });
   $('#bt-exemplo').addEventListener('click', function(){ preencherForm(EXEMPLO); });
-  $('#bt-voltar-inicio').addEventListener('click', function(){ mostrar(dados && !origemDemo ? 'pronta' : 'inicio'); });
+  $('#bt-voltar-inicio').addEventListener('click', function(){
+    if(!dados && criancas.length){ dados = criancas[criancas.length - 1]; montarPronta(); escolherAba('carta'); }
+    mostrar(dados && !origemDemo ? 'pronta' : 'inicio');
+  });
+  $('#bt-nova').addEventListener('click', function(){
+    dados = null; origemDemo = false;
+    limparForm();
+    mostrar('form');
+    $('#f-nome').focus();
+  });
   $('#form-carta').addEventListener('submit', function(e){
     e.preventDefault();
     var d = lerForm();
     if(!d) return;
-    d.num = (dados && dados.num && !origemDemo) ? dados.num : novoNumero();
+    d.num = (dados && dados.num && !origemDemo) ? dados.num : numeroUnico();
     d.dt = hojeISO();
     dados = d; origemDemo = false;
+    guardarCrianca(d);
     preparar();
   });
   $('#bt-apresentar').addEventListener('click', function(){ origemDemo = false; abrirApresentacao(); });
   $('#bt-imprimir-carta').addEventListener('click', function(){ imprimir('carta'); });
   $('#bt-imprimir-passaporte').addEventListener('click', function(){ imprimir('passaporte'); });
+  $('#bt-imprimir-certificado').addEventListener('click', function(){ imprimir('certificado'); });
   $('#bt-editar').addEventListener('click', function(){ mostrar('form'); });
   $('#bt-copiar-num').addEventListener('click', function(e){ copiar(dados.num, e.currentTarget, 'Número copiado'); });
   $('#bt-copiar-link').addEventListener('click', function(e){
@@ -732,7 +850,7 @@
   var veioPorLink = false;
   if(location.hash.indexOf('#carta=') === 0){
     var d = decodifica(location.hash.slice(7));
-    if(d){ dados = d; veioPorLink = true; montarPronta(); escolherAba('carta'); mostrar('pronta'); abrirApresentacao(); }
+    if(d){ dados = d; veioPorLink = true; guardarCrianca(d); montarPronta(); escolherAba('carta'); mostrar('pronta'); abrirApresentacao(); }
   }
   if(!veioPorLink) mostrar('inicio');
 

@@ -176,13 +176,32 @@
     <div class="acoes">
       <button id="bt-apresentar" class="bt bt-principal" type="button">Apresentar para a criança</button>
       <button id="bt-editar" class="bt bt-secundario" type="button">Editar dados</button>
+      <button id="bt-nova" class="bt bt-secundario" type="button">Nova carta para outra criança</button>
+    </div>
+    <div id="lista-criancas" class="lista-criancas" hidden>
+      <p class="painel-rotulo">Cartas criadas nesta visita</p>
+      <div id="chips-criancas" class="chips"></div>
+      <p class="painel-nota">As cartas ficam aqui enquanto esta página estiver aberta. Antes de fechar, imprima os documentos de cada uma.</p>
+    </div>
+    <div class="imprimir-agora" id="imprimir-agora">
+      <div class="ia-texto">
+        <p class="painel-rotulo">Imprima agora, antes de fechar esta página</p>
+        <p class="ia-titulo" id="ia-titulo">Carta, passaporte e certificado</p>
+        <p class="painel-nota">O site não guarda nada. Se você fechar esta página sem imprimir, os documentos somem e o número de agente não volta. Imprima os três hoje e guarde o certificado num envelope fechado até o dia 24.</p>
+      </div>
+      <ol class="ia-lista">
+        <li><button type="button" class="ia-bt" data-imp="carta"><span class="ia-n">1</span><span class="ia-nome">Carta do Papai Noel<small>para a noite de abertura</small></span><span class="ia-st">Imprimir</span></button></li>
+        <li><button type="button" class="ia-bt" data-imp="passaporte"><span class="ia-n">2</span><span class="ia-nome">Passaporte<small>página de identificação, para colar no kit</small></span><span class="ia-st">Imprimir</span></button></li>
+        <li><button type="button" class="ia-bt" data-imp="certificado"><span class="ia-n">3</span><span class="ia-nome">Certificado de Agente de Honra<small>guardar lacrado até o dia 24</small></span><span class="ia-st">Imprimir</span></button></li>
+      </ol>
+      <p id="ia-pronto" class="ia-pronto" hidden>Tudo impresso! Guarde o certificado num envelope com a etiqueta “Abrir só no dia 24”, que está no PDF Grande Final, num lugar que a criança não alcança.</p>
     </div>
     <div class="painel">
       <div class="painel-item">
         <div>
           <p class="painel-rotulo">Número de agente</p>
           <p id="num-missao" class="num-missao">PN-2026-0000</p>
-          <p class="painel-nota">Já vem escrito na carta e no passaporte. Guarde também por aqui.</p>
+          <p class="painel-nota">Já vem escrito na carta, no passaporte e no certificado. Anote também em algum lugar seu.</p>
         </div>
         <button id="bt-copiar-num" class="bt bt-pequeno" type="button">Copiar número</button>
       </div>
@@ -206,6 +225,7 @@
     <div class="abas" role="tablist" aria-label="Materiais personalizados">
       <button type="button" role="tab" id="aba-carta" aria-selected="true" aria-controls="painel-carta">Carta do Papai Noel</button>
       <button type="button" role="tab" id="aba-passaporte" aria-selected="false" aria-controls="painel-passaporte" tabindex="-1">Passaporte</button>
+      <button type="button" role="tab" id="aba-certificado" aria-selected="false" aria-controls="painel-certificado" tabindex="-1">Certificado</button>
     </div>
     <div id="painel-carta" class="aba-painel" role="tabpanel" aria-labelledby="aba-carta">
       <div class="aba-acoes">
@@ -215,11 +235,19 @@
       <div id="carta-final"></div>
     </div>
     <div id="painel-passaporte" class="aba-painel" role="tabpanel" aria-labelledby="aba-passaporte" hidden>
-      <p class="lead">A página de identificação já sai preenchida. Imprima, recorte na linha pontilhada e cole na primeira página do Passaporte do kit. A criança completa a foto, o codinome e a assinatura.</p>
+      <p class="lead">A página de identificação já sai preenchida. Imprima, recorte na linha pontilhada e cole por cima da página 2 do Passaporte do kit. A criança completa a foto, o codinome e a assinatura.</p>
       <div class="aba-acoes">
         <button id="bt-imprimir-passaporte" class="bt bt-secundario" type="button">Imprimir o passaporte</button>
       </div>
       <div id="passaporte-final"></div>
+    </div>
+    <div id="painel-certificado" class="aba-painel" role="tabpanel" aria-labelledby="aba-certificado" hidden>
+      <p class="lead">O certificado é o prêmio do dia 24. Imprima hoje, junto com a carta, e guarde num envelope fechado até o grande final. A criança não deve ver antes.</p>
+      <div class="aba-acoes">
+        <button id="bt-imprimir-certificado" class="bt bt-secundario" type="button">Imprimir o certificado</button>
+        <p class="dica-impressao">Fica ainda mais bonito em papel mais grosso (180 g) ou em papel de certificado.</p>
+      </div>
+      <div id="certificado-final"></div>
     </div>
   </section>
 
@@ -244,7 +272,9 @@
               <li><label><input type="checkbox" id="c3" data-check="c3"><span>Imprimir os Desafios do Agente que quiser usar. Eles são opcionais.</span></label></li>
               <li><label><input type="checkbox" id="c4" data-check="c4"><span>Escolher onde o cartão vai aparecer toda manhã: ao lado da cama, na mesa do café ou na porta da geladeira. Sempre o mesmo lugar vira ritual.</span></label></li>
               <li><label><input type="checkbox" id="c5" data-check="c5"><span>Separar lápis de cor, cola e uma tesoura sem ponta.</span></label></li>
-              <li><label><input type="checkbox" id="c6" data-check="c6"><span>Gerar a carta, imprimir o passaporte e testar a apresentação no aparelho que você vai usar.</span></label></li>
+              <li><label><input type="checkbox" id="c6" data-check="c6"><span>Gerar a carta no site e, no mesmo dia, imprimir a carta, o passaporte e o certificado. Depois que a página fecha, o site não guarda nada.</span></label></li>
+              <li><label><input type="checkbox" id="c7" data-check="c7"><span>Guardar o certificado num envelope fechado com a etiqueta “Abrir só no dia 24”, num lugar que a criança não alcança.</span></label></li>
+              <li><label><input type="checkbox" id="c8" data-check="c8"><span>Testar a apresentação no aparelho que você vai usar.</span></label></li>
             </ul>
           </div>
         </li>
@@ -290,14 +320,14 @@
               <li>Pista 5 na máquina de lavar</li>
               <li>Pista 6 na árvore de Natal</li>
             </ul>
-            <p>A pista 1 vai junto com o Cartão do Dia 23. Na pista 6, escreva à mão onde está a surpresa final. Se algum esconderijo não existir na sua casa, troque por outro e ajuste a pista anterior.</p>
+            <p>A pista 1 vai junto com o Cartão do Dia 23. Na pista 6, escreva à mão onde está a surpresa final. Se algum esconderijo não existir na sua casa, use uma das pistas reserva do PDF Grande Final.</p>
           </div>
         </li>
         <li class="etapa">
           <h3>O grande final (dia 24)</h3>
           <div class="etapa-corpo">
             <ul>
-              <li>Preencha o certificado com o nome da criança e a data. Assine como Papai Noel, com uma letra diferente da sua.</li>
+              <li>Pegue o certificado que você imprimiu no dia da carta, guardado no envelope. Ele já vem com o nome e o número de agente.</li>
               <li>Entregue o certificado junto com o Cartão Final do Papai Noel.</li>
               <li>Os Vale-Momentos em Família podem ir junto, como presente extra.</li>
             </ul>
@@ -310,7 +340,8 @@
               <div><dt>Esqueci de deixar o cartão.</dt><dd>Deixe dois no dia seguinte, com um aviso: “A neve atrasou o duende Faísca”.</dd></div>
               <div><dt>O dia foi corrido demais.</dt><dd>Troque por uma missão de 5 minutos, como a da gratidão (dia 4) ou a dos elogios (dia 15). Você pode trocar os dias de lugar.</dd></div>
               <div><dt>A criança não cumpriu a missão.</dt><dd>Não apague estrelas. Diga que a missão pode ser feita amanhã: a magia não tem pressa.</dd></div>
-              <div><dt>Tenho mais de um filho.</dt><dd>Gere uma carta e um passaporte para cada um. Cada criança ganha o próprio número de agente, e as missões podem ser feitas juntos.</dd></div>
+              <div><dt>Perdi o certificado ou esqueci de imprimir.</dt><dd>O PDF Grande Final tem um certificado em branco. Preencha à mão com o nome e o número de agente que estão no passaporte.</dd></div>
+              <div><dt>Tenho mais de um filho.</dt><dd>Depois de gerar a primeira carta, toque em “Nova carta para outra criança”. Cada uma ganha a própria carta, o próprio passaporte e o próprio número de agente. Imprima a carta, o passaporte e o certificado de cada uma antes de fechar a página. As missões podem ser feitas juntos.</dd></div>
               <div><dt>A criança perguntou se é você.</dt><dd>Responda com outra pergunta: “O que você acha?”. Deixe a imaginação dela decidir.</dd></div>
             </dl>
           </div>
@@ -374,6 +405,8 @@
   <section id="ap-carta" class="ap-etapa ap-etapa-carta" hidden>
     <div id="ap-folha" class="ap-folha"></div>
     <button id="bt-aceito" class="bt bt-ouro bt-grande" type="button">Eu aceito a missão!</button>
+    <div class="espia espia-faisca" aria-hidden="true"><p class="espia-balao">Psiu! Leia até o fim!</p><div class="espia-corpo" data-personagem="faisca"></div></div>
+    <div class="espia espia-lumi" aria-hidden="true"><p class="espia-balao">Será que aceita?</p><div class="espia-corpo" data-personagem="lumi"></div></div>
   </section>
 
   <section id="ap-aceita" class="ap-etapa" hidden>

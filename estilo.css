@@ -169,6 +169,15 @@ legend{font-family:var(--f-oficial); font-size:1.5rem; color:var(--pinho); paddi
 }
 .abas button[aria-selected="true"]{color:var(--neve); border-bottom-color:var(--ouro)}
 .aba-painel{display:flex; flex-direction:column; gap:18px}
+.lista-criancas{display:flex; flex-direction:column; gap:10px; background:var(--noite-2); border:1px solid var(--borda-clara); border-radius:14px; padding:16px 18px}
+.chips{display:flex; flex-wrap:wrap; gap:8px}
+.chip{
+  font:700 .98rem var(--f-ui); color:var(--neve); background:transparent; border:1.5px solid var(--borda-clara);
+  border-radius:999px; padding:8px 16px; min-height:44px; cursor:pointer; display:inline-flex; align-items:center; gap:8px
+}
+.chip small{font:400 .78rem var(--f-tele); letter-spacing:.06em; color:var(--neve-2)}
+.chip[aria-pressed="true"]{background:var(--ouro); border-color:var(--ouro); color:var(--noite)}
+.chip[aria-pressed="true"] small{color:var(--noite)}
 .aba-acoes{display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center}
 .dica-impressao{font-size:.92rem; color:var(--neve-2)}
 
@@ -410,6 +419,125 @@ body.em-intro #neve{z-index:61}
 @keyframes surgir{from{opacity:0; transform:translateY(12px)}to{opacity:1; transform:none}}
 @media (max-width:420px){ .intro-dupla{gap:10px} .balao{padding:10px 11px} }
 
+/* ---------- imprimir agora ---------- */
+.imprimir-agora{display:flex; flex-direction:column; gap:14px; background:var(--noite-2); border:1.5px solid var(--ouro); border-radius:16px; padding:18px 18px 20px}
+.ia-texto{display:flex; flex-direction:column; gap:6px}
+.ia-titulo{font-family:var(--f-oficial); font-size:1.6rem; line-height:1.1; color:var(--neve)}
+.ia-lista{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px}
+.ia-bt{
+  width:100%; display:flex; align-items:center; gap:12px; text-align:left; cursor:pointer;
+  background:var(--noite-3); color:var(--neve); border:1px solid var(--borda-clara); border-radius:12px; padding:12px 14px; min-height:56px; font:700 1rem var(--f-ui)
+}
+.ia-bt:hover{border-color:var(--ouro)}
+.ia-n{width:30px; height:30px; border-radius:50%; flex:none; display:grid; place-items:center; border:1.5px solid var(--ouro); color:var(--ouro-claro); font:400 .95rem var(--f-tele)}
+.ia-nome{flex:1; min-width:0; display:flex; flex-direction:column; gap:2px}
+.ia-nome small{font-weight:400; font-size:.85rem; color:var(--neve-2)}
+.ia-st{font:400 .8rem var(--f-tele); letter-spacing:.08em; text-transform:uppercase; color:var(--ouro-claro); white-space:nowrap}
+.ia-bt.feito .ia-n{background:var(--ouro); border-color:var(--ouro); color:var(--noite)}
+.ia-bt.feito .ia-st{color:var(--neve-2)}
+.ia-pronto{font-size:.95rem; color:var(--neve); border-left:3px solid var(--ouro); padding-left:12px}
+
+/* ---------- certificado ----------
+   Desenhado em unidades cqw (1cqw = 1% da largura do certificado):
+   o mesmo código serve para a tela, para a impressão em A4 e para o PDF do kit. */
+.ct-wrap{container-type:inline-size; width:100%; max-width:620px; margin-inline:auto}
+.certificado{
+  --ct-papel:#f7f4ec; --ct-tinta:#1c2b4b; --ct-tinta2:#55617a; --ct-ouro:#d9ab4a; --ct-ouroE:#94701f;
+  --ct-lacre:#b2202d; --ct-lacreE:#74101a; --ct-lacreC:#d9505a; --ct-pinho:#1f5040; --ct-rena:#7d5232;
+  position:relative; width:100%; aspect-ratio:210 / 297; overflow:hidden; color:var(--ct-tinta);
+  background:
+    radial-gradient(ellipse 80% 34% at 50% 0%, rgba(217,171,74,.20), transparent 70%),
+    repeating-radial-gradient(circle at 50% 52%, rgba(31,80,64,.045) 0 .22cqw, transparent .22cqw 2.4cqw),
+    var(--ct-papel);
+  box-shadow:0 24px 50px rgba(0,0,0,.42);
+  font-family:var(--f-mao);
+}
+.ct-moldura{position:absolute; inset:4cqw; border:.55cqw solid var(--ct-ouro); border-radius:1.6cqw}
+.ct-moldura::before{content:""; position:absolute; inset:1cqw; border:.16cqw solid var(--ct-ouro); border-radius:1cqw}
+.ct-moldura::after{content:""; position:absolute; inset:1.9cqw; border:.16cqw dashed rgba(178,32,45,.5); border-radius:.6cqw}
+.ct-canto{position:absolute; width:5cqw; height:5cqw; padding:.5cqw; border-radius:50%; background:var(--ct-papel); color:var(--ct-lacre)}
+.ct-canto svg{display:block; width:100%; height:100%}
+.ct-canto.c1{left:1.8cqw; top:1.8cqw} .ct-canto.c2{right:1.8cqw; top:1.8cqw}
+.ct-canto.c3{left:1.8cqw; bottom:1.8cqw} .ct-canto.c4{right:1.8cqw; bottom:1.8cqw}
+.ct-corpo{position:absolute; left:10cqw; right:10cqw; top:9cqw; display:flex; flex-direction:column; align-items:center; text-align:center}
+.ct-emblema{width:12cqw; color:var(--ct-lacre)}
+.ct-emblema svg{display:block; width:100%; height:auto}
+.ct-olho{margin-top:2cqw; font-family:var(--f-tele); font-size:1.65cqw; letter-spacing:.2em; text-transform:uppercase; color:var(--ct-tinta2)}
+.ct-titulo{margin:2cqw 0 0; font-family:var(--f-oficial); font-weight:400; font-size:10.4cqw; line-height:.95; color:var(--ct-lacre)}
+.ct-sub{margin-top:1.2cqw; font-family:var(--f-oficial); font-size:4.4cqw; line-height:1.1; color:var(--ct-pinho)}
+.ct-certificamos{margin-top:3.4cqw; font-size:3.5cqw}
+.ct-nome{margin-top:.6cqw; min-width:58cqw; max-width:100%; padding:0 3cqw .8cqw; border-bottom:.3cqw solid var(--ct-ouro); font-family:var(--f-oficial); font-size:9cqw; line-height:1.05; color:var(--ct-tinta); overflow-wrap:anywhere}
+.ct-nome.vazio{height:11cqw}
+.ct-num{margin-top:1.4cqw; font-family:var(--f-tele); font-size:2.5cqw; letter-spacing:.08em; color:var(--ct-lacre)}
+.ct-texto{margin-top:2.6cqw; max-width:78cqw; font-size:3cqw; line-height:1.4}
+.ct-texto b{color:var(--ct-pinho)}
+.ct-medidor{margin-top:2.6cqw; display:flex; flex-direction:column; align-items:center; gap:1cqw}
+.ct-medidor-rot{font-family:var(--f-tele); font-size:1.65cqw; letter-spacing:.18em; text-transform:uppercase; color:var(--ct-tinta2)}
+.ct-estrelas{display:flex; gap:.45cqw; color:var(--ct-ouro)}
+.ct-estrelas svg{display:block; width:2.45cqw; height:2.45cqw}
+.ct-data{margin-top:2.4cqw; font-size:3.1cqw}
+.ct-assinaturas{margin-top:2.4cqw; width:100%; display:grid; grid-template-columns:repeat(3, 1fr); gap:3cqw}
+.ct-assinaturas > div{display:flex; flex-direction:column; align-items:center; min-width:0}
+.ct-assin{height:6.2cqw; display:flex; align-items:flex-end; white-space:nowrap; font-family:var(--f-assin); font-size:6cqw; line-height:1; color:var(--ct-tinta); transform:rotate(-4deg)}
+.ct-pegada{height:6.2cqw; display:flex; align-items:flex-end; color:var(--ct-rena)}
+.ct-pegada svg{width:6cqw; height:6cqw; transform:rotate(-14deg)}
+.ct-assinaturas i{width:100%; border-bottom:.2cqw solid var(--ct-tinta2); margin-top:.4cqw}
+.ct-assinaturas small{margin-top:.9cqw; font-family:var(--f-ui); font-weight:700; font-size:1.55cqw; letter-spacing:.08em; text-transform:uppercase; color:var(--ct-tinta2)}
+.ct-faisca{position:absolute; left:7.5cqw; top:7.5cqw; width:14cqw}
+.ct-lumi{position:absolute; right:7cqw; top:9cqw; width:17cqw}
+.ct-faisca svg, .ct-lumi svg{display:block; width:100%; height:auto}
+.ct-selo{position:absolute; left:50%; bottom:3cqw; width:12cqw; height:12cqw; transform:translateX(-50%)}
+.ct-selo::before, .ct-selo::after{content:""; position:absolute; top:58%; width:3.8cqw; height:7.6cqw; background:var(--ct-lacre); clip-path:polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%)}
+.ct-selo::before{left:18%; transform:rotate(22deg)}
+.ct-selo::after{right:18%; transform:rotate(-22deg)}
+.ct-lacre{position:absolute; inset:0; z-index:1; display:grid; place-items:center; color:#f3d27f;
+  border-radius:48% 52% 50% 50% / 53% 47% 53% 47%;
+  background:radial-gradient(circle at 35% 30%, var(--ct-lacreC), var(--ct-lacre) 55%, var(--ct-lacreE));
+  box-shadow:inset 0 -.8cqw 1.6cqw rgba(0,0,0,.25)}
+.ct-lacre svg{width:48%; height:48%}
+/* ---------- fim certificado ---------- */
+
+/* ---------- personagens espiando a leitura da carta ----------
+   Um de cada vez: o Faísca pela esquerda, depois a Lumi pela direita. Ciclo de 12 s. */
+.espia{position:fixed; z-index:53; pointer-events:none; width:clamp(92px, 19vw, 170px)}
+.espia-corpo{position:relative; z-index:1}
+.espia-corpo svg{display:block; width:100%; height:auto}
+.espia-faisca{left:0; bottom:calc(env(safe-area-inset-bottom,0px) + 12vh); transform:translateX(-115%) rotate(16deg); animation:espiaEsq 12s 2.2s ease-in-out infinite}
+.espia-lumi{right:0; bottom:calc(env(safe-area-inset-bottom,0px) + 38vh); transform:translateX(115%) rotate(-8deg); animation:espiaDir 12s 2.2s ease-in-out infinite}
+.espia-balao{
+  position:absolute; top:-6px; width:max-content; max-width:150px; padding:7px 11px; border-radius:14px;
+  background:var(--papel); color:var(--tinta); font:700 clamp(.8rem, 2.6vw, .98rem)/1.25 var(--f-mao);
+  box-shadow:0 8px 18px var(--sombra); opacity:0; z-index:2
+}
+.espia-faisca .espia-balao{left:66%; transform:rotate(-16deg); animation:baloes 12s 2.2s ease-in-out infinite}
+.espia-lumi .espia-balao{right:62%; transform:rotate(8deg); animation:baloes 12s 8.2s ease-in-out infinite}
+@keyframes espiaEsq{
+  0%{transform:translateX(-115%) rotate(16deg)}
+  9%{transform:translateX(-36%) rotate(16deg)}
+  20%{transform:translateX(-30%) rotate(8deg)}
+  32%{transform:translateX(-36%) rotate(16deg)}
+  42%, 100%{transform:translateX(-115%) rotate(16deg)}
+}
+@keyframes espiaDir{
+  0%, 50%{transform:translateX(115%) rotate(-8deg)}
+  59%{transform:translateX(34%) rotate(-8deg)}
+  70%{transform:translateX(30%) rotate(-14deg)}
+  82%{transform:translateX(34%) rotate(-8deg)}
+  92%, 100%{transform:translateX(115%) rotate(-8deg)}
+}
+@keyframes baloes{0%, 8%{opacity:0} 12%, 30%{opacity:1} 34%, 100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){
+  .espia, .espia-balao{animation:none !important}
+  .espia-faisca{transform:translateX(-40%) rotate(16deg)}
+  .espia-lumi{transform:translateX(36%) rotate(-8deg)}
+}
+@media (max-width:600px){
+  .espia{width:84px}
+  .espia-balao{max-width:118px; padding:6px 9px}
+  .espia-faisca .espia-balao{left:52%; top:-30px}
+  .espia-lumi .espia-balao{right:40%; top:-30px}
+}
+
 #impressao{display:none}
 
 @media (prefers-reduced-motion: reduce){
@@ -431,10 +559,14 @@ body.em-intro #neve{z-index:61}
   #impressao .carta-rodape{margin-top:.8em}
   #impressao .carta-topo{grid-template-columns:auto 1fr auto}
   #impressao .carta-topo .carimbo{grid-column:auto; margin:0; width:6.4em}
-  #impressao .passaporte{width:150mm; max-width:none; margin:18mm auto 0; font-size:11.5pt; box-shadow:none; outline:1.5px dashed var(--tinta-2); outline-offset:5mm}
-  #impressao .pp-corpo{grid-template-columns:30mm 1fr}
+  #impressao .passaporte{width:140.5mm; height:97mm; max-width:none; margin:20mm auto 0; font-size:9.6pt; padding:5mm 6mm 4mm; border-radius:3mm; overflow:hidden; box-shadow:none; outline:1.5px dashed var(--tinta-2); outline-offset:3mm}
+  #impressao .pp-corpo{grid-template-columns:26mm 1fr}
+  #impressao .pp-dados{gap:1.4mm 4mm}
+  #impressao .pp-mrz{margin-top:2mm}
   #impressao .pp-dados{grid-template-columns:1fr 1fr}
   #impressao .pp-mrz{font-size:9.6pt}
+  #impressao .ct-wrap{max-width:none; width:210mm}
+  #impressao .certificado{aspect-ratio:auto; height:296mm; box-shadow:none}
   #impressao .guia{page:guia; color:var(--tinta); background:none; font-size:10.5pt}
   #impressao .guia-titulo{font-family:var(--f-oficial); font-size:22pt; color:var(--pinho); margin-bottom:4mm}
   #impressao .etapa{background:none; border:1px solid var(--campo-borda); break-inside:avoid; padding:4mm 5mm}
